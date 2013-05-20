@@ -11,25 +11,10 @@ namespace Newtonsoft.Json.Glimpse
   {
     public void Setup(IInspectorContext context)
     {
-      Func<JsonSerializerSettings> defaultSettings = JsonConvert.DefaultSettings;
-      if (defaultSettings != null)
-      {
-        // ensure any existing trace writer is wrapped
-        JsonConvert.DefaultSettings = () =>
-        {
-          JsonSerializerSettings existingSettings = defaultSettings() ?? new JsonSerializerSettings();
-          existingSettings.TraceWriter = new GlimpseTraceWriter(context.MessageBroker, context.TimerStrategy, existingSettings.TraceWriter);
+      IMessageBroker messageBroker = context.MessageBroker;
+      Func<IExecutionTimer> timerStrategy = context.TimerStrategy;
 
-          return existingSettings;
-        };
-      }
-      else
-      {
-        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-        {
-          TraceWriter = new GlimpseTraceWriter(context.MessageBroker, context.TimerStrategy)
-        };
-      }
+      GlimpseJson.Initialize(messageBroker, timerStrategy);
     }
   }
 }

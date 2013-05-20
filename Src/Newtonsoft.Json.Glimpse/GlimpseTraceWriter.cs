@@ -80,12 +80,7 @@ namespace Newtonsoft.Json.Glimpse
 
       JsonAction action;
       string type;
-      if (_traceMessages.Count > 0)
-      {
-        action = _traceMessages[0].Action;
-        type = _traceMessages[0].Type;
-      }
-      else
+      if (_traceMessages.Count == 0)
       {
         Match match = Regex.Match(traceMessage.Message, @"^Started serializing ([^\s]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         if (match.Success)
@@ -111,10 +106,18 @@ namespace Newtonsoft.Json.Glimpse
         // create timeline message
         // will be updated each trace with new duration
         _timelineMessage = new JsonTimelineMessage();
-        _timelineMessage.AsTimelineMessage(action.ToString("G") + " - " + type, new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
+        _timelineMessage.AsTimelineMessage(action.ToString("G") + " - " + RemoveAssemblyDetails(type), new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
         _messageBroker.Publish(_timelineMessage);
 
         _start = _timerStrategy().Start();
+      }
+      else
+      {
+        JsonTraceMessage previous = _traceMessages.Last();
+        previous.Duration = null;
+
+        action = previous.Action;
+        type = previous.Type;
       }
 
       TimerResult result = _timerStrategy().Stop(_start);
@@ -122,6 +125,7 @@ namespace Newtonsoft.Json.Glimpse
 
       traceMessage.Action = action;
       traceMessage.Type = RemoveAssemblyDetails(type);
+      traceMessage.Duration = result.Duration;
 
       _messageBroker.Publish(traceMessage);
       _traceMessages.Add(traceMessage);

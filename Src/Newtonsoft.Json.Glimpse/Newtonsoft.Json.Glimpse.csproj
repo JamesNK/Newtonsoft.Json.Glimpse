@@ -91,7 +91,7 @@
   <ItemGroup>
     <Compile Include="GlimpseTraceWriter.cs" />
     <Compile Include="Messages\JsonTraceMessage.cs" />
-    <Compile Include="Initialize.cs" />
+    <Compile Include="GlimpseJson.cs" />
     <Compile Include="JsonInspector.cs" />
     <Compile Include="Tabs\JsonModel.cs" />
     <Compile Include="Tabs\JsonTab.cs" />
