@@ -1,5 +1,5 @@
 ﻿properties { 
-  $zipFileName = "Json10r1.zip"
+  $zipFileName = "JsonGlimpse10r1.zip"
   $majorVersion = "1.0"
   $majorWithReleaseVersion = "1.0.1"
   $version = GetVersion $majorWithReleaseVersion
@@ -71,7 +71,7 @@ task Package -depends Build {
   if ($buildNuGet)
   {
     New-Item -Path $workingDir\NuGet -ItemType Directory
-    Copy-Item -Path "$buildDir\Newtonsoft.Json.nuspec" -Destination $workingDir\NuGet\Newtonsoft.Json.nuspec -recurse
+    Copy-Item -Path "$buildDir\Newtonsoft.Json.Glimpse.nuspec" -Destination $workingDir\NuGet\Newtonsoft.Json.Glimpse.nuspec -recurse
     
     foreach ($build in $builds)
     {
@@ -88,7 +88,7 @@ task Package -depends Build {
       }
     }
   
-    exec { .\Tools\NuGet\NuGet.exe pack $workingDir\NuGet\Newtonsoft.Json.nuspec -Symbols }
+    exec { .\Tools\NuGet\NuGet.exe pack $workingDir\NuGet\Newtonsoft.Json.Glimpse.nuspec -Symbols }
     move -Path .\*.nupkg -Destination $workingDir\NuGet
   }
   
