@@ -17,7 +17,7 @@
   $releaseDir = "$baseDir\Release"
   $workingDir = "$baseDir\Working"
   $builds = @(
-    @{Name = "Newtonsoft.Json.Net35"; TestsName = "Newtonsoft.Json.Tests.Net35"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$true}
+    @{Name = "Newtonsoft.Json.Glimpse"; TestsName = "Newtonsoft.Json.Glimpse.Tests"; Constants="NET35"; FinalDir="Net35"; NuGetDir = "net35"; Framework="net-2.0"; Sign=$true}
   )
 }
 
@@ -92,8 +92,8 @@ task Package -depends Build {
     move -Path .\*.nupkg -Destination $workingDir\NuGet
   }
   
-  Copy-Item -Path $docDir\readme.txt -Destination $workingDir\Package\
-  Copy-Item -Path $docDir\license.txt -Destination $workingDir\Package\
+  #Copy-Item -Path $docDir\readme.txt -Destination $workingDir\Package\
+  #Copy-Item -Path $docDir\license.txt -Destination $workingDir\Package\
 
   robocopy $sourceDir $workingDir\Package\Source\Src /MIR /NP /XD .svn bin obj TestResults AppPackages /XF *.suo *.user | Out-Default
   robocopy $buildDir $workingDir\Package\Source\Build /MIR /NP /XD .svn | Out-Default
@@ -119,13 +119,13 @@ task Test -depends Deploy {
         
         Write-Host -ForegroundColor Green "Copying test assembly $name to deployed directory"
         Write-Host
-        robocopy ".\Src\Newtonsoft.Json.Tests\bin\Release\$finalDir" $workingDir\Deployed\Bin\$finalDir /MIR /NP /XO /XF LinqBridge.dll | Out-Default
+        robocopy ".\Src\Newtonsoft.Json.Glimpse.Tests\bin\Release\$finalDir" $workingDir\Deployed\Bin\$finalDir /MIR /NP /XO /XF LinqBridge.dll | Out-Default
         
-        Copy-Item -Path ".\Src\Newtonsoft.Json.Tests\bin\Release\$finalDir\Newtonsoft.Json.Tests.dll" -Destination $workingDir\Deployed\Bin\$finalDir\
+        Copy-Item -Path ".\Src\Newtonsoft.Json.Glimpse.Tests\bin\Release\$finalDir\Newtonsoft.Json.Glimpse.Tests.dll" -Destination $workingDir\Deployed\Bin\$finalDir\
 
         Write-Host -ForegroundColor Green "Running tests " $name
         Write-Host
-        exec { .\Tools\NUnit\nunit-console.exe "$workingDir\Deployed\Bin\$finalDir\Newtonsoft.Json.Tests.dll" /framework=$framework /xml:$workingDir\$name.xml | Out-Default } "Error running $name tests"
+        exec { .\Tools\NUnit\nunit-console.exe "$workingDir\Deployed\Bin\$finalDir\Newtonsoft.Json.Glimpse.Tests.dll" /framework=$framework /xml:$workingDir\$name.xml | Out-Default } "Error running $name tests"
     }
   }
 }
