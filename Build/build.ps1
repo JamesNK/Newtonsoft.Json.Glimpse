@@ -6,7 +6,7 @@
   $signAssemblies = $false
   $signKeyPath = "D:\Development\Releases\newtonsoft.snk"
   $buildDocumentation = $false
-  $buildNuGet = $false
+  $buildNuGet = $true
   $treatWarningsAsErrors = $false
   
   $baseDir  = resolve-path ..
@@ -77,13 +77,13 @@ task Package -depends Build {
     {
       if ($build.NuGetDir -ne $null)
       {
-        $name = $build.TestsName
+        $name = $build.Name
         $finalDir = $build.FinalDir
         $frameworkDirs = $build.NuGetDir.Split(",")
         
         foreach ($frameworkDir in $frameworkDirs)
         {
-          robocopy "$sourceDir\Newtonsoft.Json.Glimpse\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir *.dll *.pdb *.xml /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
+          robocopy "$sourceDir\Newtonsoft.Json.Glimpse\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir Newtonsoft.Json.Glimpse.dll Newtonsoft.Json.Glimpse.pdb Newtonsoft.Json.Glimpse.xml /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
         }
       }
     }

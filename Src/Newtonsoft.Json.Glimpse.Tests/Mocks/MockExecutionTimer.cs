@@ -24,42 +24,42 @@
 #endregion
 
 using System;
-using NUnit.Framework;
+using System.Linq;
+using System.Text;
+using Glimpse.Core.Extensibility;
 
-namespace Newtonsoft.Json.Glimpse.Tests
+namespace Newtonsoft.Json.Glimpse.Tests.Mocks
 {
-  [TestFixture]
-  public abstract class TestFixtureBase
+  public class MockExecutionTimer : IExecutionTimer
   {
-    [SetUp]
-    protected void TestSetup()
+    public TimerResult Point()
     {
-      //CultureInfo turkey = CultureInfo.CreateSpecificCulture("tr");
-      //Thread.CurrentThread.CurrentCulture = turkey;
-      //Thread.CurrentThread.CurrentUICulture = turkey;
+      throw new NotImplementedException();
     }
-  }
 
-  public static class ExceptionAssert
-  {
-    public static void Throws<TException>(string message, Action action)
-        where TException : Exception
+    public DateTime RequestStart
     {
-      try
-      {
-        action();
+      get { throw new NotImplementedException(); }
+    }
 
-        Assert.Fail("Exception of type {0} expected; got none exception", typeof(TException).Name);
-      }
-      catch (TException ex)
-      {
-        if (message != null)
-          Assert.AreEqual(message, ex.Message, "Unexpected exception message." + Environment.NewLine + "Expected: " + message + Environment.NewLine + "Got: " + ex.Message + Environment.NewLine + Environment.NewLine + ex);
-      }
-      catch (Exception ex)
-      {
-        throw new Exception(string.Format("Exception of type {0} expected; got exception of type {1}.", typeof(TException).Name, ex.GetType().Name), ex);
-      }
+    public TimeSpan Start()
+    {
+      throw new NotImplementedException();
+    }
+
+    public TimerResult Stop(TimeSpan offset)
+    {
+      throw new NotImplementedException();
+    }
+
+    public TimerResult Time(Action action)
+    {
+      throw new NotImplementedException();
+    }
+
+    public TimerResult<T> Time<T>(Func<T> function)
+    {
+      throw new NotImplementedException();
     }
   }
 }

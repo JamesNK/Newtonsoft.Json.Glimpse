@@ -24,41 +24,44 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using NUnit.Framework;
+using Newtonsoft.Json.Glimpse.Tests.Mocks;
 
 namespace Newtonsoft.Json.Glimpse.Tests
 {
   [TestFixture]
-  public abstract class TestFixtureBase
+  public class JsonInspectorTests
   {
-    [SetUp]
-    protected void TestSetup()
-    {
-      //CultureInfo turkey = CultureInfo.CreateSpecificCulture("tr");
-      //Thread.CurrentThread.CurrentCulture = turkey;
-      //Thread.CurrentThread.CurrentUICulture = turkey;
-    }
-  }
-
-  public static class ExceptionAssert
-  {
-    public static void Throws<TException>(string message, Action action)
-        where TException : Exception
+    [Test]
+    public void Setup()
     {
       try
       {
-        action();
 
-        Assert.Fail("Exception of type {0} expected; got none exception", typeof(TException).Name);
+        MockMessageBroker broker = new MockMessageBroker();
+        MockExecutionTimer timer = new MockExecutionTimer();
+        MockInspectorContext inspectorContext = new MockInspectorContext
+        {
+          MessageBroker = broker,
+          TimerStrategy = () => timer
+        };
+
+        JsonInspector inspector = new JsonInspector();
+        inspector.Setup(inspectorContext);
+
+        Assert.IsNotNull(JsonConvert.DefaultSettings);
+
+        JsonSerializerSettings settings = JsonConvert.DefaultSettings();
+
+        Assert.IsNotNull(settings.TraceWriter);
+        Assert.IsInstanceOf<GlimpseTraceWriter>(settings.TraceWriter);
       }
-      catch (TException ex)
+      finally
       {
-        if (message != null)
-          Assert.AreEqual(message, ex.Message, "Unexpected exception message." + Environment.NewLine + "Expected: " + message + Environment.NewLine + "Got: " + ex.Message + Environment.NewLine + Environment.NewLine + ex);
-      }
-      catch (Exception ex)
-      {
-        throw new Exception(string.Format("Exception of type {0} expected; got exception of type {1}.", typeof(TException).Name, ex.GetType().Name), ex);
+        JsonConvert.DefaultSettings = null;
       }
     }
   }

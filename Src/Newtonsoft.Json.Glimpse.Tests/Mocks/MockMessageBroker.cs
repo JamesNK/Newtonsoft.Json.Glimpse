@@ -24,42 +24,32 @@
 #endregion
 
 using System;
-using NUnit.Framework;
+using System.Collections.Generic;
+using Glimpse.Core.Extensibility;
 
-namespace Newtonsoft.Json.Glimpse.Tests
+namespace Newtonsoft.Json.Glimpse.Tests.Mocks
 {
-  [TestFixture]
-  public abstract class TestFixtureBase
+  public class MockMessageBroker : IMessageBroker
   {
-    [SetUp]
-    protected void TestSetup()
+    public IList<object> Messages { get; private set; }
+
+    public MockMessageBroker()
     {
-      //CultureInfo turkey = CultureInfo.CreateSpecificCulture("tr");
-      //Thread.CurrentThread.CurrentCulture = turkey;
-      //Thread.CurrentThread.CurrentUICulture = turkey;
+      Messages = new List<object>();
     }
-  }
 
-  public static class ExceptionAssert
-  {
-    public static void Throws<TException>(string message, Action action)
-        where TException : Exception
+    public void Publish<T>(T message)
     {
-      try
-      {
-        action();
+      Messages.Add(message);
+    }
 
-        Assert.Fail("Exception of type {0} expected; got none exception", typeof(TException).Name);
-      }
-      catch (TException ex)
-      {
-        if (message != null)
-          Assert.AreEqual(message, ex.Message, "Unexpected exception message." + Environment.NewLine + "Expected: " + message + Environment.NewLine + "Got: " + ex.Message + Environment.NewLine + Environment.NewLine + ex);
-      }
-      catch (Exception ex)
-      {
-        throw new Exception(string.Format("Exception of type {0} expected; got exception of type {1}.", typeof(TException).Name, ex.GetType().Name), ex);
-      }
+    public Guid Subscribe<T>(Action<T> action)
+    {
+      return Guid.Empty;
+    }
+
+    public void Unsubscribe<T>(Guid subscriptionId)
+    {
     }
   }
 }
