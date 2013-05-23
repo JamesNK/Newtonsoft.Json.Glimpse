@@ -32,6 +32,8 @@ namespace Newtonsoft.Json.Glimpse.Tests.Mocks
 {
   public class MockExecutionTimer : IExecutionTimer
   {
+    private int _seconds;
+
     public TimerResult Point()
     {
       throw new NotImplementedException();
@@ -44,12 +46,17 @@ namespace Newtonsoft.Json.Glimpse.Tests.Mocks
 
     public TimeSpan Start()
     {
-      throw new NotImplementedException();
+      return TimeSpan.FromSeconds(++_seconds);
     }
 
     public TimerResult Stop(TimeSpan offset)
     {
-      throw new NotImplementedException();
+      return new TimerResult
+        {
+          StartTime = new DateTime(2000, 12, 12, 12, 12, 12, DateTimeKind.Utc),
+          Duration = offset,
+          Offset = offset
+        };
     }
 
     public TimerResult Time(Action action)

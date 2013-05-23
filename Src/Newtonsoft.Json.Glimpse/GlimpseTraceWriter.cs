@@ -73,7 +73,7 @@ namespace Newtonsoft.Json.Glimpse
     public void Trace(TraceLevel level, string message, Exception ex)
     {
       // write to any existing trace writer
-      if (_innerTraceWriter != null && level >= _innerTraceWriter.LevelFilter)
+      if (_innerTraceWriter != null && level <= _innerTraceWriter.LevelFilter)
         _innerTraceWriter.Trace(level, message, ex);
 
       // check message to see if serialization is complete
@@ -131,7 +131,10 @@ namespace Newtonsoft.Json.Glimpse
         // create timeline message
         // will be updated each trace with new duration
         _timelineMessage = new JsonTimelineMessage();
-        _timelineMessage.AsTimelineMessage(action.ToString("G") + " - " + RemoveAssemblyDetails(type), new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
+        string timelineMessage = action.ToString("G");
+        if (type != null)
+          timelineMessage += " - " + RemoveAssemblyDetails(type);
+        _timelineMessage.AsTimelineMessage(timelineMessage, new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
         _messageBroker.Publish(_timelineMessage);
 
         _start = _timerStrategy().Start();
@@ -149,7 +152,7 @@ namespace Newtonsoft.Json.Glimpse
       _timelineMessage.AsTimedMessage(result);
 
       traceMessage.Action = action;
-      traceMessage.Type = RemoveAssemblyDetails(type);
+      traceMessage.Type = (type != null ) ? RemoveAssemblyDetails(type) : null;
       traceMessage.Duration = result.Duration;
 
       _messageBroker.Publish(traceMessage);

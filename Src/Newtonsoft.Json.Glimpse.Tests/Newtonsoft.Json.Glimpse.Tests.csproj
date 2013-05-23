@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlimpseJsonTests.cs" />
+    <Compile Include="GlimpseTraceWriterTests.cs" />
     <Compile Include="JsonInspectorTests.cs" />
     <Compile Include="Mocks\MockInspectorContext.cs" />
     <Compile Include="Mocks\MockMessageBroker.cs" />
