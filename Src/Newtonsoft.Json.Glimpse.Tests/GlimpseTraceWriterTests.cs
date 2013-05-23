@@ -64,6 +64,10 @@ namespace Newtonsoft.Json.Glimpse.Tests
       Assert.AreEqual(null, messages[1].Type);
       Assert.AreEqual(TimeSpan.FromSeconds(1), messages[1].Duration);
       Assert.AreEqual("More random text", messages[1].Message);
+
+      IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
+      Assert.AreEqual(1, timelineMessages.Count);
+      Assert.AreEqual("Unknown", timelineMessages[0].EventName);
     }
 
     [Test]
@@ -113,6 +117,10 @@ namespace Newtonsoft.Json.Glimpse.Tests
   2,
   3
 ]", messages[2].JsonText);
+
+      IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
+      Assert.AreEqual(1, timelineMessages.Count);
+      Assert.AreEqual("Serialize - Int32", timelineMessages[0].EventName);
     }
 
     [Test]
@@ -162,6 +170,10 @@ namespace Newtonsoft.Json.Glimpse.Tests
   2,
   3
 ]", messages[2].JsonText);
+
+      IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
+      Assert.AreEqual(1, timelineMessages.Count);
+      Assert.AreEqual("Deserialize - Int32", timelineMessages[0].EventName);
     }
   }
 }
