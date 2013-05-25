@@ -121,6 +121,35 @@ namespace Newtonsoft.Json.Glimpse.Tests
       IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
       Assert.AreEqual(1, timelineMessages.Count);
       Assert.AreEqual("Serialize - Int32", timelineMessages[0].EventName);
+      Assert.AreEqual(TimeSpan.FromSeconds(1), timelineMessages[0].Duration);
+    }
+
+    [Test]
+    public void TimerStrategyReturnNull()
+    {
+      MockMessageBroker broker = new MockMessageBroker();
+
+      GlimpseTraceWriter writer = new GlimpseTraceWriter(broker, () => null);
+      writer.Trace(TraceLevel.Verbose, "Started serializing System.Int32.", null);
+      writer.Trace(TraceLevel.Verbose, "Serialized JSON:" + Environment.NewLine + new JArray(1, 2, 3), null);
+      Assert.AreEqual(0, writer.TraceMessages.Count);
+
+      IList<JsonTraceMessage> messages = broker.Messages.OfType<JsonTraceMessage>().ToList();
+      Assert.AreEqual(1, messages.Count);
+
+      Assert.AreEqual(JsonAction.Serialize, messages[0].Action);
+      Assert.AreEqual("Int32", messages[0].Type);
+      Assert.AreEqual(null, messages[0].Duration);
+      Assert.AreEqual(@"[
+  1,
+  2,
+  3
+]", messages[0].JsonText);
+
+      IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
+      Assert.AreEqual(1, timelineMessages.Count);
+      Assert.AreEqual("Serialize - Int32", timelineMessages[0].EventName);
+      Assert.AreEqual(TimeSpan.Zero, timelineMessages[0].Duration);
     }
 
     [Test]

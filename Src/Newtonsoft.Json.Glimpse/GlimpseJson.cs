@@ -63,7 +63,7 @@ namespace Newtonsoft.Json.Glimpse
         timerStrategy,
         messageBroker);
 
-      JsonConvert.DefaultSettings = settingsFactory.GetDefaultSettings;
+      JsonConvert.DefaultSettings = settingsFactory.GetDefaultSerializerSettings;
     }
   }
 }
