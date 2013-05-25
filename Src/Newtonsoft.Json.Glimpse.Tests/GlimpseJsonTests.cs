@@ -46,7 +46,7 @@ namespace Newtonsoft.Json.Glimpse.Tests
         MockMessageBroker broker = new MockMessageBroker();
         MockExecutionTimer timer = new MockExecutionTimer();
 
-        GlimpseJson.Initialize(broker, () => timer);
+        GlimpseJson.Initialize(() => RuntimePolicy.On, () => timer, broker);
 
         Assert.IsNotNull(JsonConvert.DefaultSettings);
 
@@ -74,7 +74,7 @@ namespace Newtonsoft.Json.Glimpse.Tests
         MockMessageBroker broker = new MockMessageBroker();
         MockExecutionTimer timer = new MockExecutionTimer();
 
-        GlimpseJson.Initialize(broker, () => timer);
+        GlimpseJson.Initialize(() => RuntimePolicy.PersistResults, () => timer, broker);
 
         Assert.IsNotNull(JsonConvert.DefaultSettings);
 
@@ -82,6 +82,59 @@ namespace Newtonsoft.Json.Glimpse.Tests
 
         Assert.IsNotNull(settings.TraceWriter);
         Assert.IsInstanceOf<GlimpseTraceWriter>(settings.TraceWriter);
+
+        Assert.AreEqual(Formatting.Indented, settings.Formatting);
+      }
+      finally
+      {
+        JsonConvert.DefaultSettings = null;
+      }
+    }
+
+    [Test]
+    public void Initialize_GlimpseOff()
+    {
+      try
+      {
+        JsonConvert.DefaultSettings = null;
+
+        MockMessageBroker broker = new MockMessageBroker();
+        MockExecutionTimer timer = new MockExecutionTimer();
+
+        GlimpseJson.Initialize(() => RuntimePolicy.Off, () => timer, broker);
+
+        Assert.IsNotNull(JsonConvert.DefaultSettings);
+
+        JsonSerializerSettings settings = JsonConvert.DefaultSettings();
+
+        Assert.IsNull(settings.TraceWriter);
+      }
+      finally
+      {
+        JsonConvert.DefaultSettings = null;
+      }
+    }
+
+    [Test]
+    public void Initialize_DefaultSettings_GlimpseOff()
+    {
+      try
+      {
+        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+        {
+          Formatting = Formatting.Indented
+        };
+
+        MockMessageBroker broker = new MockMessageBroker();
+        MockExecutionTimer timer = new MockExecutionTimer();
+
+        GlimpseJson.Initialize(() => RuntimePolicy.ExecuteResourceOnly, () => timer, broker);
+
+        Assert.IsNotNull(JsonConvert.DefaultSettings);
+
+        JsonSerializerSettings settings = JsonConvert.DefaultSettings();
+
+        Assert.IsNull(settings.TraceWriter);
 
         Assert.AreEqual(Formatting.Indented, settings.Formatting);
       }

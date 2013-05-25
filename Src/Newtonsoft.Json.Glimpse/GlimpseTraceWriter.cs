@@ -75,18 +75,24 @@ namespace Newtonsoft.Json.Glimpse
       if (_innerTraceWriter != null && level <= _innerTraceWriter.LevelFilter)
         _innerTraceWriter.Trace(level, message, ex);
 
+      IExecutionTimer timer = _timerStrategy();
+      
       if (_traceMessages.Count > 0)
       {
         // check message to see if serialization is complete
         if (message.StartsWith("Serialized JSON:", StringComparison.Ordinal) || message.StartsWith("Deserialized JSON:", StringComparison.Ordinal))
         {
-          TimerResult timeResult = _timerStrategy().Stop(_start);
-          _timelineMessage.AsTimedMessage(timeResult);
+          TimerResult timeResult = null;
+          if (timer != null)
+          {
+            timeResult = timer.Stop(_start);
+            _timelineMessage.AsTimedMessage(timeResult);
+          }
 
           // set final JSON onto previous message
           JsonTraceMessage lastMessage = _traceMessages.Last();
           lastMessage.JsonText = message.Substring(message.IndexOf(Environment.NewLine, StringComparison.Ordinal)).Trim();
-          lastMessage.Duration = timeResult.Duration;
+          lastMessage.Duration = (timeResult != null) ? (TimeSpan?) timeResult.Duration : null;
 
           _traceMessages.Clear();
           return;
@@ -132,7 +138,8 @@ namespace Newtonsoft.Json.Glimpse
         _timelineMessage = CreateJsonTimelineMessage(action, type);
         _messageBroker.Publish(_timelineMessage);
 
-        _start = _timerStrategy().Start();
+        if (timer != null)
+          _start = timer.Start();
       }
       else
       {
@@ -143,8 +150,12 @@ namespace Newtonsoft.Json.Glimpse
         type = previous.Type;
       }
 
-      TimerResult result = _timerStrategy().Stop(_start);
-      _timelineMessage.AsTimedMessage(result);
+      TimerResult result = null;
+      if (timer != null)
+      {
+        result = timer.Stop(_start);
+        _timelineMessage.AsTimedMessage(result);
+      }
 
       JsonTraceMessage traceMessage = new JsonTraceMessage
         {
@@ -156,7 +167,7 @@ namespace Newtonsoft.Json.Glimpse
           JsonText = json,
           Action = action,
           Type = (type != null) ? RemoveAssemblyDetails(type) : null,
-          Duration = result.Duration
+          Duration = (result != null) ? (TimeSpan?)result.Duration : null
         };
 
       _messageBroker.Publish(traceMessage);

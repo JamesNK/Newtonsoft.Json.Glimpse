@@ -32,7 +32,7 @@ using Glimpse.Core.Extensions;
 using Glimpse.Core.Tab.Assist;
 using Newtonsoft.Json.Glimpse.Messages;
 
-namespace Newtonsoft.Json.Glimpse.Tabs
+namespace Newtonsoft.Json.Glimpse.Tab
 {
   internal class JsonTab : TabBase, IDocumentation, ITabSetup, ITabLayout, IKey
   {

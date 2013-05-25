@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json.Glimpse.Messages;
 
-namespace Newtonsoft.Json.Glimpse.Tabs
+namespace Newtonsoft.Json.Glimpse.Tab
 {
   internal class JsonModel
   {

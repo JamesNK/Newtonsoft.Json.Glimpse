@@ -33,7 +33,7 @@ using Glimpse.Core.Extensibility;
 using Glimpse.Core.Extensions;
 using Glimpse.Core.Tab.Assist;
 
-namespace Newtonsoft.Json.Glimpse.Tabs
+namespace Newtonsoft.Json.Glimpse.Tab
 {
   internal class ListOfJsonModelConverter : SerializationConverter<List<JsonModel>>
   {

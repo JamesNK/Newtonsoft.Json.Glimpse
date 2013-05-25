@@ -30,6 +30,7 @@ using System.Text;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
 using Glimpse.Core.Setting;
+using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json.Glimpse
 {
@@ -38,40 +39,31 @@ namespace Newtonsoft.Json.Glimpse
   /// </summary>
   public static class GlimpseJson
   {
+    internal static Func<RuntimePolicy> RuntimePolicyStrategy;
+
     /// <summary>
     /// Initializes the Json.NET Glimpse extension.
     /// </summary>
     public static void Initialize()
     {
+      // because there is no static way to access runtime policy strategy
+      // RuntimePolicyStrategy will be set from JsonInspector
+      Func<RuntimePolicy> runtimePolicyStrategy = RuntimePolicyStrategy ?? (() => RuntimePolicy.On);
+
 #pragma warning disable 612,618
-      Initialize(GlimpseConfiguration.GetConfiguredMessageBroker(), GlimpseConfiguration.GetConfiguredTimerStrategy());
+      Initialize(runtimePolicyStrategy, GlimpseConfiguration.GetConfiguredTimerStrategy(), GlimpseConfiguration.GetConfiguredMessageBroker());
 #pragma warning restore 612,618
     }
 
-    internal static void Initialize(IMessageBroker messageBroker, Func<IExecutionTimer> timerStrategy)
+    internal static void Initialize(Func<RuntimePolicy> runtimePolicyStrategy, Func<IExecutionTimer> timerStrategy, IMessageBroker messageBroker)
     {
-      Func<JsonSerializerSettings> defaultSettings = JsonConvert.DefaultSettings;
-      if (defaultSettings != null)
-      {
-        // ensure any existing trace writer is wrapped
-        JsonConvert.DefaultSettings = () =>
-        {
-          JsonSerializerSettings existingSettings = defaultSettings() ?? new JsonSerializerSettings();
+      JsonSerializerSettingsFactory settingsFactory = new JsonSerializerSettingsFactory(
+        JsonConvert.DefaultSettings,
+        runtimePolicyStrategy,
+        timerStrategy,
+        messageBroker);
 
-          // anti-inception
-          if (!(existingSettings.TraceWriter is GlimpseTraceWriter))
-            existingSettings.TraceWriter = new GlimpseTraceWriter(messageBroker, timerStrategy, existingSettings.TraceWriter);
-
-          return existingSettings;
-        };
-      }
-      else
-      {
-        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-        {
-          TraceWriter = new GlimpseTraceWriter(messageBroker, timerStrategy)
-        };
-      }
+      JsonConvert.DefaultSettings = settingsFactory.GetDefaultSettings;
     }
   }
 }

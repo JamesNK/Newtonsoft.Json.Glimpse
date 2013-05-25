@@ -36,10 +36,14 @@ namespace Newtonsoft.Json.Glimpse
   {
     public void Setup(IInspectorContext context)
     {
-      IMessageBroker messageBroker = context.MessageBroker;
+      Func<RuntimePolicy> runtimePolicyStrategy = context.RuntimePolicyStrategy;
       Func<IExecutionTimer> timerStrategy = context.TimerStrategy;
+      IMessageBroker messageBroker = context.MessageBroker;
 
-      GlimpseJson.Initialize(messageBroker, timerStrategy);
+      // because there is no static way to access runtime policy strategy
+      GlimpseJson.RuntimePolicyStrategy = runtimePolicyStrategy;
+
+      GlimpseJson.Initialize(runtimePolicyStrategy, timerStrategy, messageBroker);
     }
   }
 }

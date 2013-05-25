@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glimpse.Core.Extensibility;
 using NUnit.Framework;
 using Newtonsoft.Json.Glimpse.Tests.Mocks;
 
@@ -45,6 +46,7 @@ namespace Newtonsoft.Json.Glimpse.Tests
         MockExecutionTimer timer = new MockExecutionTimer();
         MockInspectorContext inspectorContext = new MockInspectorContext
         {
+          RuntimePolicyStrategy = () => RuntimePolicy.On,
           MessageBroker = broker,
           TimerStrategy = () => timer
         };

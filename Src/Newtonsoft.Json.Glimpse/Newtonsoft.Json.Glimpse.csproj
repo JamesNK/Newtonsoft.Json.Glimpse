@@ -94,12 +94,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlimpseTraceWriter.cs" />
+    <Compile Include="JsonSerializerSettingsFactory.cs" />
     <Compile Include="Messages\JsonTraceMessage.cs" />
     <Compile Include="GlimpseJson.cs" />
     <Compile Include="JsonInspector.cs" />
-    <Compile Include="Tabs\JsonModel.cs" />
-    <Compile Include="Tabs\JsonTab.cs" />
-    <Compile Include="Tabs\ListOfJsonModelConverter.cs" />
+    <Compile Include="Tab\JsonModel.cs" />
+    <Compile Include="Tab\JsonTab.cs" />
+    <Compile Include="Tab\ListOfJsonModelConverter.cs" />
     <Compile Include="Messages\JsonAction.cs" />
     <Compile Include="Messages\JsonTimelineMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
