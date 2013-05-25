@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Message;
@@ -76,9 +75,9 @@ namespace Newtonsoft.Json.Glimpse
       if (_innerTraceWriter != null && level <= _innerTraceWriter.LevelFilter)
         _innerTraceWriter.Trace(level, message, ex);
 
-      // check message to see if serialization is complete
-      if (_traceMessages.Count > 1)
+      if (_traceMessages.Count > 0)
       {
+        // check message to see if serialization is complete
         if (message.StartsWith("Serialized JSON:", StringComparison.Ordinal) || message.StartsWith("Deserialized JSON:", StringComparison.Ordinal))
         {
           TimerResult timeResult = _timerStrategy().Stop(_start);
@@ -94,20 +93,12 @@ namespace Newtonsoft.Json.Glimpse
         }
       }
 
-      JsonTraceMessage traceMessage = new JsonTraceMessage
-        {
-          Ordinal = _traceMessages.Count,
-          MessageDate = DateTime.Now,
-          Level = level,
-          Message = message,
-          Exception = ex
-        };
-
-      JsonAction action;
-      string type;
+      JsonAction action = JsonAction.Unknown;
+      string type = null;
+      string json = null;
       if (_traceMessages.Count == 0)
       {
-        Match match = Regex.Match(traceMessage.Message, @"^Started serializing ([^\s]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        Match match = Regex.Match(message, @"^Started serializing ([^\s]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         if (match.Success)
         {
           type = match.Groups[1].Value.TrimEnd('.');
@@ -115,7 +106,7 @@ namespace Newtonsoft.Json.Glimpse
         }
         else
         {
-          match = Regex.Match(traceMessage.Message, @"^Started deserializing ([^\s]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+          match = Regex.Match(message, @"^Started deserializing ([^\s]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
           if (match.Success)
           {
             type = match.Groups[1].Value.TrimEnd('.');
@@ -123,18 +114,22 @@ namespace Newtonsoft.Json.Glimpse
           }
           else
           {
-            type = null;
-            action = JsonAction.Unknown;
+            if (message.StartsWith("Serialized JSON:", StringComparison.Ordinal))
+              action = JsonAction.Serialize;
+            else if (message.StartsWith("Deserialized JSON:", StringComparison.Ordinal))
+              action = JsonAction.Deserialize;
+
+            if (action != JsonAction.Unknown)
+            {
+              json = message.Substring(message.IndexOf(Environment.NewLine, StringComparison.Ordinal)).Trim();
+              message = null;
+            }
           }
         }
 
         // create timeline message
         // will be updated each trace with new duration
-        _timelineMessage = new JsonTimelineMessage();
-        string timelineMessage = action.ToString("G");
-        if (type != null)
-          timelineMessage += " - " + RemoveAssemblyDetails(type);
-        _timelineMessage.AsTimelineMessage(timelineMessage, new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
+        _timelineMessage = CreateJsonTimelineMessage(action, type);
         _messageBroker.Publish(_timelineMessage);
 
         _start = _timerStrategy().Start();
@@ -151,12 +146,31 @@ namespace Newtonsoft.Json.Glimpse
       TimerResult result = _timerStrategy().Stop(_start);
       _timelineMessage.AsTimedMessage(result);
 
-      traceMessage.Action = action;
-      traceMessage.Type = (type != null ) ? RemoveAssemblyDetails(type) : null;
-      traceMessage.Duration = result.Duration;
+      JsonTraceMessage traceMessage = new JsonTraceMessage
+        {
+          Ordinal = _traceMessages.Count,
+          MessageDate = DateTime.Now,
+          Level = level,
+          Message = message,
+          Exception = ex,
+          JsonText = json,
+          Action = action,
+          Type = (type != null) ? RemoveAssemblyDetails(type) : null,
+          Duration = result.Duration
+        };
 
       _messageBroker.Publish(traceMessage);
       _traceMessages.Add(traceMessage);
+    }
+
+    private static JsonTimelineMessage CreateJsonTimelineMessage(JsonAction action, string type)
+    {
+      JsonTimelineMessage timelineMessage = new JsonTimelineMessage();
+      string eventName = action.ToString("G");
+      if (type != null)
+        eventName += " - " + RemoveAssemblyDetails(type);
+      timelineMessage.AsTimelineMessage(eventName, new TimelineCategoryItem(action.ToString("G"), "#B3DF00", "#9BBB59"));
+      return timelineMessage;
     }
 
     private static string RemoveAssemblyDetails(string fullyQualifiedTypeName)
@@ -166,13 +180,13 @@ namespace Newtonsoft.Json.Glimpse
       for (int i = 0; i < parts.Length; i++)
       {
         // handle multiple generic parameters
-        string[] partsparts = parts[i].Split(',');
-        for (int j = 0; j < partsparts.Length; j++)
+        string[] parameters = parts[i].Split(',');
+        for (int j = 0; j < parameters.Length; j++)
         {
-          partsparts[j] = RemoveNamespaces(partsparts[j]);
+          parameters[j] = RemoveNamespaces(parameters[j]);
         }
 
-        parts[i] = string.Join(",", partsparts);
+        parts[i] = string.Join(",", parameters);
       }
 
       string fixedTypeName = string.Join("[", parts);

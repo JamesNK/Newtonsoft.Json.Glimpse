@@ -124,6 +124,32 @@ namespace Newtonsoft.Json.Glimpse.Tests
     }
 
     [Test]
+    public void DeserializeToLinqToJson()
+    {
+      MockMessageBroker broker = new MockMessageBroker();
+      MockExecutionTimer timer = new MockExecutionTimer();
+
+      GlimpseTraceWriter writer = new GlimpseTraceWriter(broker, () => timer);
+      writer.Trace(TraceLevel.Verbose, @"Deserialized JSON:
+[1,2,3]", null);
+
+      Assert.AreEqual(1, writer.TraceMessages.Count);
+
+      IList<JsonTraceMessage> messages = broker.Messages.OfType<JsonTraceMessage>().ToList();
+      Assert.AreEqual(1, messages.Count);
+
+      Assert.AreEqual(JsonAction.Deserialize, messages[0].Action);
+      Assert.AreEqual(null, messages[0].Type);
+      Assert.AreEqual(TimeSpan.FromSeconds(1), messages[0].Duration);
+      Assert.AreEqual(null, messages[0].Message);
+      Assert.AreEqual(@"[1,2,3]", messages[0].JsonText);
+
+      IList<JsonTimelineMessage> timelineMessages = broker.Messages.OfType<JsonTimelineMessage>().ToList();
+      Assert.AreEqual(1, timelineMessages.Count);
+      Assert.AreEqual("Deserialize", timelineMessages[0].EventName);
+    }
+
+    [Test]
     public void Deserialize()
     {
       MockMessageBroker broker = new MockMessageBroker();

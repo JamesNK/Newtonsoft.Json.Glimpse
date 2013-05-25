@@ -27,8 +27,8 @@ namespace Newtonsoft.Json.Glimpse.Messages
 {
   internal enum JsonAction
   {
+    Unknown,
     Serialize,
-    Deserialize,
-    Unknown
+    Deserialize
   }
 }
