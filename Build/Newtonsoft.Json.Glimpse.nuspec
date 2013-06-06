@@ -3,15 +3,16 @@
   <metadata>
     <id>Newtonsoft.Json.Glimpse</id>
     <version>1.0.1</version>
-    <title>Json.NET Plugin for Glimpse</title>
-    <description>View Json.NET's trace messages and serialized JSON with this plugin for Glimpse, a diagnostics tool for ASP.NET</description>
+    <title>Glimpse for Json.NET</title>
+    <description>Debug JSON on the server with this Json.NET plugin for Glimpse, a diagnostics tool for ASP.NET</description>
     <authors>James Newton-King</authors>
     <language>en-US</language>
     <projectUrl>http://james.newtonking.com/projects/json-net.aspx</projectUrl>
     <licenseUrl>http://json.codeplex.com/license</licenseUrl>
     <tags>json glimpse</tags>
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="5.0.0" />
+      <dependency id="Glimpse" version="1.3.3" />
+      <dependency id="Newtonsoft.Json" version="5.0.6" />
     </dependencies>
   </metadata>
 </package>
