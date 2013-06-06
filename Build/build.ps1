@@ -65,7 +65,7 @@ task Package -depends Build {
     $name = $build.TestsName
     $finalDir = $build.FinalDir
     
-    robocopy "$sourceDir\Newtonsoft.Json.Glimpse\bin\Release\$finalDir" $workingDir\Package\Bin\$finalDir *.dll *.pdb *.xml /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
+    robocopy "$sourceDir\Newtonsoft.Json.Glimpse\bin\Release\$finalDir" $workingDir\Package\Bin\$finalDir Newtonsoft.Json.Glimpse.dll Newtonsoft.Json.Glimpse.pdb Newtonsoft.Json.Glimpse.xml /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
   }
   
   if ($buildNuGet)
