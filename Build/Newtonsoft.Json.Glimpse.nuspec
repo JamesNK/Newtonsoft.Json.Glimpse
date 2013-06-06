@@ -4,7 +4,7 @@
     <id>Newtonsoft.Json.Glimpse</id>
     <version>1.0.1</version>
     <title>Glimpse for Json.NET</title>
-    <description>Debug JSON on the server with this Json.NET plugin for Glimpse, a diagnostics tool for ASP.NET</description>
+    <description>Debug JSON on the server with the Json.NET plugin for Glimpse, a diagnostics tool for ASP.NET</description>
     <authors>James Newton-King</authors>
     <language>en-US</language>
     <projectUrl>http://james.newtonking.com/projects/json-net.aspx</projectUrl>

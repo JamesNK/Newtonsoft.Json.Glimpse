@@ -96,7 +96,7 @@ task Package -depends Build {
   #Copy-Item -Path $docDir\license.txt -Destination $workingDir\Package\
 
   robocopy $sourceDir $workingDir\Package\Source\Src /MIR /NP /XD .svn bin obj TestResults AppPackages /XF *.suo *.user | Out-Default
-  robocopy $buildDir $workingDir\Package\Source\Build /MIR /NP /XD .svn | Out-Default
+  robocopy $buildDir $workingDir\Package\Source\Build /MIR /NP /XD .svn /XF runbuild.txt | Out-Default
   robocopy $toolsDir $workingDir\Package\Source\Tools /MIR /NP /XD .svn | Out-Default
   
   exec { .\Tools\7-zip\7za.exe a -tzip $workingDir\$zipFileName $workingDir\Package\* | Out-Default } "Error zipping"
