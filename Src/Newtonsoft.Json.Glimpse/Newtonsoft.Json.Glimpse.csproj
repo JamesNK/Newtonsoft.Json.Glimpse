@@ -99,7 +99,7 @@
     <Compile Include="GlimpseJson.cs" />
     <Compile Include="JsonInspector.cs" />
     <Compile Include="Tab\JsonModel.cs" />
-    <Compile Include="Tab\JsonTab.cs" />
+    <Compile Include="Tab\Json.cs" />
     <Compile Include="Tab\ListOfJsonModelConverter.cs" />
     <Compile Include="Messages\JsonAction.cs" />
     <Compile Include="Messages\JsonTimelineMessage.cs" />

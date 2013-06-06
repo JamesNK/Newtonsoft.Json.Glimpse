@@ -34,11 +34,11 @@ using Newtonsoft.Json.Glimpse.Messages;
 
 namespace Newtonsoft.Json.Glimpse.Tab
 {
-  internal class JsonTab : TabBase, IDocumentation, ITabSetup, ITabLayout, IKey
+  internal class Json : TabBase, IDocumentation, ITabSetup, ITabLayout, IKey
   {
     private static readonly object Layout;
 
-    static JsonTab()
+    static Json()
     {
       Layout = TabLayout.Create().Row(delegate(TabLayoutRow r)
         {
@@ -51,7 +51,7 @@ namespace Newtonsoft.Json.Glimpse.Tab
 
     public string DocumentationUri
     {
-      get { return "http://james.newtonking.com/"; }
+      get { return "http://james.newtonking.com/projects/json-net.aspx"; }
     }
 
     public void Setup(ITabSetupContext context)
