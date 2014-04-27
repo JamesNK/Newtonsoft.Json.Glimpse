@@ -31,28 +31,12 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-#if WINDOWS_PHONE
-[assembly: AssemblyTitle("Json.NET Tests Windows Phone")]
-#elif SILVERLIGHT
-[assembly: AssemblyTitle("Json.NET Tests Silverlight")]
-#elif PORTABLE
-[assembly: AssemblyTitle("Json.NET Tests Portable")]
-#elif NETFX_CORE
-[assembly: AssemblyTitle("Json.NET Tests WinRT")]
-#elif NET20
-[assembly: AssemblyTitle("Json.NET Tests .NET 2.0")]
-#elif NET35
-[assembly: AssemblyTitle("Json.NET Tests .NET 3.5")]
-#elif NET40
-[assembly: AssemblyTitle("Json.NET Tests .NET 4.0")]
-#else
-[assembly: AssemblyTitle("Json.NET Tests")]
-#endif
+[assembly: AssemblyTitle("Glimpse for Json.NET Tests")]
 
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Newtonsoft")]
-[assembly: AssemblyProduct("Json.NET Tests")]
+[assembly: AssemblyProduct("Glimpse for Json.NET Tests")]
 [assembly: AssemblyCopyright("Copyright © James Newton-King 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

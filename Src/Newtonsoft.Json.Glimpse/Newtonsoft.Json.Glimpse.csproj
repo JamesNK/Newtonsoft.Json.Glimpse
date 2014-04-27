@@ -50,7 +50,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\Net35\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;NET35</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\Net35\Newtonsoft.Json.Glimpse.xml</DocumentationFile>
